@@ -1,0 +1,62 @@
+{
+  "name": "vscode-prettier-eslint",
+  "displayName": "VSCode Prettier ESLint",
+  "description": "VSCode extension to format your JavaScript and TypeScript using prettier-eslint",
+  "version": "1.0.0",
+  "publisher": "exceptionptr",
+  "author": "Stanislaw Schlosser <schlosser.st@gmail.com>",
+  "icon": "icon.png",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/0x2aff/vscode-prettier-eslint"
+  },
+  "scripts": {
+    "watch": "echo Watch Step!",
+    "vscode:prepublish": "echo PrePublish Step!"
+  },
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Formatters"
+  ],
+  "main": "./src/extension.js",
+  "activationEvents": [
+    "onLanguage:css",
+    "onLanguage:scss",
+    "onLanguage:less",
+    "onLanguage:json",
+    "onLanguage:jsonc",
+    "onLanguage:html",
+    "onLanguage:javascript",
+    "onLanguage:javascriptreact",
+    "onLanguage:typescript",
+    "onLanguage:typescriptreact"
+  ],
+  "contributes": {
+    "configuration": {
+      "title": "VSCode Prettier ESLint",
+      "properties": {
+        "vscode-prettier-eslint.prettierLast": {
+          "type": "boolean",
+          "default": false,
+          "description": "Run prettier last"
+        }
+      }
+    }
+  },
+  "imports": {
+    "#vscode": "./src/vscode.mjs",
+    "#prettier-eslint": "./src/prettier-eslint.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^16.18.34",
+    "@types/vscode": "^1.73.0"
+  },
+  "dependencies": {
+    "find-up": "7.0.0",
+    "ignore": "5.3.0",
+    "prettier-eslint": "16.1.2"
+  }
+}
