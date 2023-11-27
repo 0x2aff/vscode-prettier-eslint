@@ -18,7 +18,7 @@ The [Prettier extension](https://marketplace.visualstudio.com/items?itemName=esb
 
 ### Install Dependencies
 
-Install `prettier` and `eslint` as dev dependencies in your project. Use the appropriate command based on your project requirements. The commands below use `pnpm` but you can also use `npm`. Replace `pnpm add` with `npm i` if needed.
+Install `prettier`, `eslint` and `prettier-eslint` as dev dependencies in your project. Use the appropriate command based on your project requirements. The commands below use `pnpm` but you can also use `npm`. Replace `pnpm add` with `npm i` if needed.
 
 #### Minimum Requirements
 
