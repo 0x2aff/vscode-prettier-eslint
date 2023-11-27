@@ -10,6 +10,7 @@ To use this VSCode extension for formatting JavaScript and TypeScript with [pret
 
 - `prettier@^3`
 - `eslint@^8`
+- `prettier-eslint@^16`
 - `@typescript-eslint/parser@^6` and `typescript@^5` **(Only for TypeScript projects)**
 
 ## Notes
@@ -22,13 +23,13 @@ Install `prettier` and `eslint` as dev dependencies in your project. Use the app
 #### Minimum Requirements
 
 ```bash
-pnpm add -D prettier@^3 eslint@^8
+pnpm add -D prettier@^3 eslint@^8 prettier-eslint@^16
 ```
 
 #### TypeScript Projects
 
 ```bash
-pnpm add -D prettier@3 eslint@^8 @typescript-eslint/parser@^6 typescript@^5
+pnpm add -D prettier@3 eslint@^8 prettier-eslint@^16 @typescript-eslint/parser@^6 typescript@^5
 ```
 
 ### Project Settings

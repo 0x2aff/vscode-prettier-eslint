@@ -2,7 +2,7 @@
   "name": "vscode-prettier-eslint",
   "displayName": "VSCode Prettier ESLint",
   "description": "VSCode extension to format your JavaScript and TypeScript using prettier-eslint",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "publisher": "exceptionptr",
   "author": "Stanislaw Schlosser <schlosser.st@gmail.com>",
   "icon": "icon.png",
@@ -36,18 +36,7 @@
     "onLanguage:typescript",
     "onLanguage:typescriptreact"
   ],
-  "contributes": {
-    "configuration": {
-      "title": "VSCode Prettier ESLint",
-      "properties": {
-        "vscode-prettier-eslint.prettierLast": {
-          "type": "boolean",
-          "default": false,
-          "description": "Run prettier last"
-        }
-      }
-    }
-  },
+  "contributes": {},
   "imports": {
     "#vscode": "./src/vscode.mjs",
     "#prettier-eslint": "./src/prettier-eslint.mjs"
@@ -61,6 +50,9 @@
   },
   "dependencies": {
     "find-up": "7.0.0",
-    "ignore": "5.3.0"
+    "i": "^0.3.7",
+    "ignore": "5.3.0",
+    "npm": "^10.2.4",
+    "require-relative": "^0.8.7"
   }
 }

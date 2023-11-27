@@ -1,3 +1,4 @@
+import requireRelative from 'require-relative';
 import { parentPort } from 'worker_threads';
 
 const moduleCache = new Map();
@@ -25,12 +26,12 @@ function onParentPortMessage({ type, payload }) {
  * @param {*} payload
  */
 function onImport(payload) {
-  const { modulePath } = payload;
+  const { filePath, modulePath } = payload;
 
   let instance = moduleCache.get(modulePath);
 
   if (!instance) {
-    instance = loadNodeModule(modulePath);
+    instance = loadNodeModule(modulePath, filePath);
     moduleCache.set(modulePath, instance);
   }
 
@@ -45,7 +46,7 @@ function onImport(payload) {
  * @param {*} payload
  */
 function onCallMethod(payload) {
-  const { modulePath, methodArgs, id } = payload;
+  const { modulePath, text, filePath, id } = payload;
 
   try {
     const instance = moduleCache.get(modulePath);
@@ -54,7 +55,8 @@ function onCallMethod(payload) {
       throw new Error(`No instance found for module path: ${modulePath}`);
     }
 
-    const result = instance(...methodArgs);
+    const arg = { text, filePath };
+    const result = instance(arg);
 
     if (result instanceof Promise) {
       result.then(
@@ -88,9 +90,8 @@ function onCallMethod(payload) {
 
 /**
  * @param {string} modulePath
+ * @param {string} filePath
  */
-function loadNodeModule(modulePath) {
-  return typeof require(modulePath) === 'function'
-    ? require(modulePath)
-    : require(modulePath).default;
+function loadNodeModule(modulePath, filePath) {
+  return requireRelative(modulePath, filePath);
 }

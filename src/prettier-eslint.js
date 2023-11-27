@@ -1,9 +1,6 @@
 import * as path from 'path';
-import vscode from 'vscode';
 
 import { Worker } from "worker_threads";
-
-const worker = new Worker(path.join(__dirname, 'worker.js'));
 
 export class PrettierEslintVSCode {
   /**
@@ -30,16 +27,15 @@ export class PrettierEslintVSCode {
    */
   _modulePath = '';
 
+  _worker = new Worker(path.resolve(__dirname, 'worker.js'));
+
   /**
    * @param {string} modulePath
    */
   constructor(modulePath) {
-    const workspaceDir = vscode.workspace.workspaceFolders?.[0]?.uri?.fsPath;
-    const nodeModulesPath = workspaceDir ? path.join(workspaceDir, 'node_modules') : null;
+    this._modulePath = modulePath;
 
-    this._modulePath = nodeModulesPath ? path.join(nodeModulesPath, modulePath) : modulePath;
-
-    worker.on('message', ({ type, payload }) => {
+    this._worker.on('message', ({ type, payload }) => {
       switch (type) {
         case 'import':
           this._importResolver?.resolve(payload.name);
@@ -63,35 +59,37 @@ export class PrettierEslintVSCode {
   }
 
   /**
+   * @param {string} filePath
    * @returns {Promise<string>}
    */
-  async import() {
+  async import(filePath) {
     const promise = new Promise((resolve, reject) => {
       this._importResolver = { resolve, reject };
     });
 
-    worker.postMessage({
+    this._worker.postMessage({
       type: 'import',
-      payload: { modulePath: this._modulePath },
+      payload: { filePath, modulePath: this._modulePath },
     });
 
     return promise;
   }
 
   /**
-   * @param {unknown[]} methodArgs
+   * @param {string} text
+   * @param {string} filePath
    * @returns {Promise<any>}
    */
-  callMethod(methodArgs) {
+  callMethod(text, filePath) {
     const callMethodId = this._currentCallMethodId++;
 
     const promise = new Promise((resolve, reject) => {
       this._callMethodResolvers.push({ id: callMethodId, resolve, reject });
     });
 
-    worker.postMessage({
+    this._worker.postMessage({
       type: 'callMethod',
-      payload: { modulePath: this._modulePath, methodArgs, id: callMethodId },
+      payload: { modulePath: this._modulePath, text, filePath, id: callMethodId },
     });
 
     return promise;

@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 import nodeIgnore from 'ignore';
-
 import vscode from 'vscode';
 import { findUpSync } from 'find-up';
 
@@ -78,12 +77,13 @@ function isFilePathMatchedByIgnore(filePath, workspaceDirectory, ignoreFileName)
 
 /**
  * Formats the given text.
- * @param {{ text: string; filePath: string; extensionConfig: { prettierLast: boolean; }; }} params - The parameters.
+ * @param {string} text
+ * @param {string} filePath
  * @returns {Promise<string>} The formatted text.
  */
-async function formatText({ text, filePath, extensionConfig }) {
+async function formatText(text, filePath) {
   try {
-    const name = await prettierEslint.import();
+    const name = await prettierEslint.import(filePath);
 
     if (!name) {
       outputChannel.appendLine('No prettier-eslint found.');
@@ -91,7 +91,7 @@ async function formatText({ text, filePath, extensionConfig }) {
     }
 
     const result = await prettierEslint
-      .callMethod([{ text, filePath, prettierLast: extensionConfig.prettierLast }]);
+      .callMethod(text, filePath);
 
     return result;
   } catch (/** @type { any } */ err) {
@@ -107,15 +107,8 @@ async function formatText({ text, filePath, extensionConfig }) {
  * @param {import('vscode').TextDocument} document - The document.
  */
 async function formatter(document) {
-  const documentPath = path.dirname(document.fileName);
-
-  const workspaceDirectory = vscode.workspace?.workspaceFolders?.find(
-    (/** @type {{ uri: { path: string; }; }} */ folder) =>
-      documentPath.startsWith(folder.uri.path)
-  );
-
   try {
-    const workspaceDirPath = workspaceDirectory?.uri?.path;
+    const workspaceDirPath = vscode.workspace.workspaceFolders?.[0]?.uri?.fsPath
 
     if (isFilePathMatchedByIgnore(document.fileName, workspaceDirPath, '.eslintignore')) {
       outputChannel.appendLine(`File ${document.fileName} is ignored by ESLint.`);
@@ -134,8 +127,7 @@ async function formatter(document) {
 
     const text = document.getText(range);
 
-    const extensionConfig = vscode.workspace.getConfiguration('vscode-prettier-eslint');
-    const formatted = await formatText({ text, filePath: document.fileName, extensionConfig });
+    const formatted = await formatText(text, document.fileName);
 
     return [vscode.TextEdit.replace(range, formatted)];
   } catch (/** @type { any } */ err) {
