@@ -27,18 +27,28 @@ function onParentPortMessage({ type, payload }) {
  */
 function onImport(payload) {
   const { filePath, modulePath } = payload;
+  try {
+    let instance = moduleCache.get(modulePath);
 
-  let instance = moduleCache.get(modulePath);
+    if (!instance) {
+      instance = loadNodeModule(modulePath, filePath);
 
-  if (!instance) {
-    instance = loadNodeModule(modulePath, filePath);
-    moduleCache.set(modulePath, instance);
+      if (!instance)
+        throw new Error(`No instance found for module path: ${modulePath}`);
+
+      moduleCache.set(modulePath, instance);
+    }
+
+    parentPort?.postMessage({
+      type: 'import',
+      payload: { name: instance.name },
+    });
+  } catch (/** @type { any } */ err) {
+    parentPort?.postMessage({
+      type: 'import',
+      payload: { error: err.message },
+    });
   }
-
-  parentPort?.postMessage({
-    type: 'import',
-    payload: { name: instance.name },
-  });
 }
 
 /**

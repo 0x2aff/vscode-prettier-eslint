@@ -95,6 +95,8 @@ async function formatText(text, filePath) {
 
     return result;
   } catch (/** @type { any } */ err) {
+    prettierEslint.reload();
+
     outputChannel.appendLine(`Error: ${err.message} \n ${err.stack}`);
     outputChannel.show();
   }

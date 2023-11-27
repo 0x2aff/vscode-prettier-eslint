@@ -38,7 +38,11 @@ export class PrettierEslintVSCode {
     this._worker.on('message', ({ type, payload }) => {
       switch (type) {
         case 'import':
-          this._importResolver?.resolve(payload.name);
+          if (payload.error)
+            this._importResolver?.reject(new Error(payload.error));
+          else
+            this._importResolver?.resolve(payload.name);
+
           break;
 
         case 'callMethod':
@@ -93,5 +97,9 @@ export class PrettierEslintVSCode {
     });
 
     return promise;
+  }
+
+  reload() {
+    this._worker = new Worker(path.resolve(__dirname, 'worker.js'));
   }
 }
