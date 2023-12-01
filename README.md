@@ -6,7 +6,7 @@
 
 ## Prerequisites
 
-To use this VSCode extension for formatting JavaScript and TypeScript with [prettier-eslint](https://github.com/prettier/prettier-eslint), ensure the following packages are installed, either locally or globally:
+To use this VSCode extension for formatting JavaScript and TypeScript with [prettier-eslint](https://github.com/prettier/prettier-eslint), ensure the following packages are installed, locally:
 
 - `prettier@^3`
 - `eslint@^8`
@@ -52,7 +52,6 @@ Configure your project by creating or updating a settings.json file at the proje
      "editor.formatOnSave": true, // optional
      "editor.formatOnSaveMode": "file", // required to format on save
      "files.autoSave": "onFocusChange", // optional but recommended
-     "vscode-prettier-eslint.prettierLast": false // set as "true" to run 'prettier' last not first
    }
    ```
 

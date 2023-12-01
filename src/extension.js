@@ -52,7 +52,6 @@ function getIsIgnored(filename) {
  * @param {string} ignoreFileName - The name of the ignore file.
  */
 function isFilePathMatchedByIgnore(filePath, workspaceDirectory, ignoreFileName) {
-
   /**
    * @type {{ cwd: string; stopAt?: string; }}
    */
@@ -73,6 +72,19 @@ function isFilePathMatchedByIgnore(filePath, workspaceDirectory, ignoreFileName)
 
   const isIgnored = getIsIgnored(ignoreFilePath);
   return isIgnored(filePathRelativeToIgnoreFileDir);
+}
+
+/**
+ * Checks if the given file path is not in the workspace.
+ * @param {string} filePath - The file path.
+ * @param {string | undefined} workspaceDirectory - The workspace directory.
+ */
+function fileNotInWorkspace(filePath, workspaceDirectory) {
+  if (!workspaceDirectory) {
+    return true;
+  }
+
+  return !filePath.startsWith(workspaceDirectory);
 }
 
 /**
@@ -112,14 +124,19 @@ async function formatter(document) {
   try {
     const workspaceDirPath = vscode.workspace.workspaceFolders?.[0]?.uri?.fsPath
 
+    if (fileNotInWorkspace(document.fileName, workspaceDirPath)) {
+      outputChannel.appendLine(`File ${document.fileName} is not in the workspace.`);
+      return [];
+    }
+
     if (isFilePathMatchedByIgnore(document.fileName, workspaceDirPath, '.eslintignore')) {
       outputChannel.appendLine(`File ${document.fileName} is ignored by ESLint.`);
-      return;
+      return [];
     }
 
     if (isFilePathMatchedByIgnore(document.fileName, workspaceDirPath, '.prettierignore')) {
       outputChannel.appendLine(`File ${document.fileName} is ignored by Prettier.`);
-      return;
+      return [];
     }
 
     const startLine = document.lineAt(0);
@@ -134,7 +151,6 @@ async function formatter(document) {
     return [vscode.TextEdit.replace(range, formatted)];
   } catch (/** @type { any } */ err) {
     outputChannel.appendLine(`Error: ${err.message} \n ${err.stack}`);
-    outputChannel.show();
   }
 }
 
