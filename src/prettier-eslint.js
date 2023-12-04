@@ -5,12 +5,6 @@ import { Worker } from "worker_threads";
 export class PrettierEslintVSCode {
   /**
    * @private
-   * @type {{ resolve: (name: string) => void; reject: (err: Error) => void; } | null}
-   */
-  _importResolver = null;
-
-  /**
-   * @private
    * @type {{ id: number; resolve: (result: unknown) => void; reject: (err: Error) => void; }[]}}
    */
   _callMethodResolvers = [];
@@ -37,14 +31,6 @@ export class PrettierEslintVSCode {
 
     this._worker.on('message', ({ type, payload }) => {
       switch (type) {
-        case 'import':
-          if (payload.error)
-            this._importResolver?.reject(new Error(payload.error));
-          else
-            this._importResolver?.resolve(payload.name);
-
-          break;
-
         case 'callMethod':
           const callMethodResolver = this._callMethodResolvers.find(({ id }) => id === payload.id);
           if (!callMethodResolver) break;
@@ -60,23 +46,6 @@ export class PrettierEslintVSCode {
           throw new Error(`Unknown message type: ${type}`);
       }
     });
-  }
-
-  /**
-   * @param {string} filePath
-   * @returns {Promise<string>}
-   */
-  async import(filePath) {
-    const promise = new Promise((resolve, reject) => {
-      this._importResolver = { resolve, reject };
-    });
-
-    this._worker.postMessage({
-      type: 'import',
-      payload: { filePath, modulePath: this._modulePath },
-    });
-
-    return promise;
   }
 
   /**
@@ -97,9 +66,5 @@ export class PrettierEslintVSCode {
     });
 
     return promise;
-  }
-
-  reload() {
-    this._worker = new Worker(path.resolve(__dirname, 'worker.js'));
   }
 }

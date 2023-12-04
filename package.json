@@ -2,7 +2,7 @@
   "name": "vscode-prettier-eslint",
   "displayName": "VSCode Prettier ESLint",
   "description": "VSCode extension to format your JavaScript and TypeScript using prettier-eslint",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "publisher": "exceptionptr",
   "author": "Stanislaw Schlosser <schlosser.st@gmail.com>",
   "icon": "icon.png",

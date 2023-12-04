@@ -95,22 +95,12 @@ function fileNotInWorkspace(filePath, workspaceDirectory) {
  */
 async function formatText(text, filePath) {
   try {
-    const name = await prettierEslint.import(filePath);
-
-    if (!name) {
-      outputChannel.appendLine('No prettier-eslint found.');
-      throw new Error('No prettier-eslint found.');
-    }
-
     const result = await prettierEslint
       .callMethod(text, filePath);
 
     return result;
   } catch (/** @type { any } */ err) {
-    prettierEslint.reload();
-
     outputChannel.appendLine(`Error: ${err.message} \n ${err.stack}`);
-    outputChannel.show();
   }
 
   return text;
